@@ -6,7 +6,7 @@ import {
   InternalServerError,
   UnauthorizedError,
 } from "../utils/AppError.util";
-import { generateToken } from "../utils/jwt";
+import { generateToken } from "../utils/jwt.util";
 
 export const createUser = async (userData: RegisterRequest) => {
   const { email, password, name } = userData;
@@ -29,7 +29,7 @@ export const createUser = async (userData: RegisterRequest) => {
     [email, passwordHashed, name],
   );
 
-  const user = result.rows[0];
+  const user = result.rows.at(0);
 
   if (!user) {
     throw new InternalServerError("Failed to create user record in database.");
@@ -45,4 +45,51 @@ export const createUser = async (userData: RegisterRequest) => {
     },
     token,
   };
+};
+
+export const validateUserCredentials = async (credential: LoginRequest) => {
+  const { email, password } = credential;
+  if (!email || !password) {
+    throw new BadRequestError("Email and password are required");
+  }
+
+  const result = await pool.query<User>(
+    "SELECT * FROM users WHERE email = $1",
+    [email],
+  );
+
+  const user = result.rows.at(0);
+  if (!user) {
+    throw new UnauthorizedError("Invalid credentials");
+  }
+
+  const isValidPassword = Bun.password.verify(password, user.password_hash);
+  if (!isValidPassword) {
+    throw new UnauthorizedError("Invalid credentials");
+  }
+
+  const token = generateToken({ userId: user.id, email: user.email });
+
+  return {
+    user: {
+      id: user.id,
+      email: email,
+      name: user.name,
+    },
+    token,
+  };
+};
+
+export const getCurrentUser = async (userId: string) => {
+  const result = await pool.query<User>(
+    "SELECT id, email, name created_at FROM users WHERE id = $1",
+    [userId],
+  );
+
+  const user = result.rows[0];
+  if (!user) {
+    throw new UnauthorizedError("Not found user in database");
+  }
+
+  return user;
 };
