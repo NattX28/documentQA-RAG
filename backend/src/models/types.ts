@@ -25,6 +25,8 @@ export interface DocumentChunk {
   document_id: string;
   content: string;
   embedding: number[];
+  page_number?: number;
+  metadata?: any;
   chunk_index: any;
   created_at: Date;
 }
@@ -51,9 +53,15 @@ export interface SourceChunk {
   content: string;
   similarity: number;
   chunk_index: number;
+  page_number?: number;
 }
 
 export interface AuthTokenPayload {
   userId: string;
   email: string;
+}
+
+export interface ParsedDocument {
+  text: string;
+  pages?: string[];
 }
