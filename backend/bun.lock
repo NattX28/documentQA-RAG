@@ -8,6 +8,7 @@
         "@langchain/community": "^1.1.5",
         "@langchain/core": "^1.1.16",
         "@langchain/openai": "^1.2.3",
+        "@langchain/textsplitters": "^1.0.1",
         "@supabase/supabase-js": "^2.91.0",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",

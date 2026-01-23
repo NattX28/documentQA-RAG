@@ -65,3 +65,9 @@ export interface ParsedDocument {
   text: string;
   pages?: string[];
 }
+
+export interface TextChunk {
+  content: string;
+  index: number;
+  pageNumber?: number;
+}
