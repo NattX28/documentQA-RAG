@@ -14,7 +14,7 @@ export const createUser = async (userData: RegisterRequest) => {
     throw new BadRequestError("Email and password are required");
   }
 
-  const existsUser = await pool.query("SELECT id FROM users WHERE email = $1", [
+  const existsUser = await pool.query(`SELECT id FROM users WHERE email = $1`, [
     email,
   ]);
 
@@ -54,7 +54,7 @@ export const validateUserCredentials = async (credential: LoginRequest) => {
   }
 
   const result = await pool.query<User>(
-    "SELECT * FROM users WHERE email = $1",
+    `SELECT * FROM users WHERE email = $1`,
     [email],
   );
 
@@ -82,7 +82,7 @@ export const validateUserCredentials = async (credential: LoginRequest) => {
 
 export const getCurrentUser = async (userId: string) => {
   const result = await pool.query<User>(
-    "SELECT id, email, name created_at FROM users WHERE id = $1",
+    `SELECT id, email, name, created_at FROM users WHERE id = $1`,
     [userId],
   );
 
