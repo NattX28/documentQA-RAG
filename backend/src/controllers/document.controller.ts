@@ -1,6 +1,11 @@
 import type { Request, Response } from "express";
 
-import { uploadDocument as uploadDocumentService } from "../services/document.service";
+import {
+  getDocumentById,
+  getUserDocuments,
+  uploadDocument as uploadDocumentService,
+  deleteDocument as deleteDocumentService,
+} from "../services/document.service";
 
 export const uploadDocument = async (req: Request, res: Response) => {
   const userId = req.user!.userId;
@@ -20,5 +25,24 @@ export const uploadDocument = async (req: Request, res: Response) => {
       file_size: document.file_size,
       uploaded_at: document.uploaded_at,
     },
+  });
+};
+
+export const getDocuments = async (req: Request, res: Response) => {
+  const userId = req.user!.userId;
+  const documents = await getUserDocuments(userId);
+
+  res.json({ success: true, documents });
+};
+
+export const deleteDocument = async (req: Request, res: Response) => {
+  const userId = req.user!.userId;
+  const { documentId } = req.params;
+
+  await deleteDocumentService(documentId as string, userId);
+
+  res.json({
+    success: true,
+    message: "Document deleted successfully",
   });
 };
