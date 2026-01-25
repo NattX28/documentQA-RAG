@@ -16,7 +16,7 @@ export const createConversation = async (req: Request, res: Response) => {
   res.status(201).json({ conversation: result.rows.at(0) });
 };
 
-export const chat = async (req: Request, res: Response) => {
+export const sendMessage = async (req: Request, res: Response) => {
   const userId = req.user!.userId;
   const { message, conversationId } = req.body;
 
