@@ -1,16 +1,19 @@
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { llm } from "../config/langchain";
-import type { SourceChunk } from "../models/types";
+import type { Message, SourceChunk } from "../models/types";
 import { searchSimilarChunks } from "./vector.service";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
+  MessagesPlaceholder,
   SystemMessagePromptTemplate,
 } from "@langchain/core/prompts";
 
 export const generateAnswer = async (
   query: string,
   userId: string,
-  conversationId: string,
+  conversationId?: string,
+  history?: Pick<Message, "role" | "content">[],
 ): Promise<{ answer: string; sources: SourceChunk[] }> => {
   const sources = await searchSimilarChunks(query, userId, 5, 0.7);
 
@@ -33,6 +36,12 @@ export const generateAnswer = async (
     })
     .join("\n\n");
 
+  const chatHistory = history?.map((msg) =>
+    msg.role === "user"
+      ? new HumanMessage(msg.content)
+      : new AIMessage(msg.content),
+  );
+
   // Create prompt
   const systemTemplate = `คุณเป็น AI ผู้ช่วยตอบคำถามโดยอ้างอิงจากเอกสารที่ให้มา
       กฎการตอบคำถาม:
@@ -50,6 +59,7 @@ export const generateAnswer = async (
 
   const chatPrompt = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(systemTemplate),
+    new MessagesPlaceholder("chat_history"),
     HumanMessagePromptTemplate.fromTemplate(humanTemplate),
   ]);
 
@@ -57,6 +67,7 @@ export const generateAnswer = async (
   const formattedPrompt = await chatPrompt.formatMessages({
     context: context,
     question: query,
+    chat_history: chatHistory,
   });
 
   const response = await llm.invoke(formattedPrompt);
