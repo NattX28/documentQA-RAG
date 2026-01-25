@@ -12,7 +12,6 @@ import {
 export const generateAnswer = async (
   query: string,
   userId: string,
-  conversationId?: string,
   history?: Pick<Message, "role" | "content">[],
 ): Promise<{ answer: string; sources: SourceChunk[] }> => {
   const sources = await searchSimilarChunks(query, userId, 5, 0.7);
