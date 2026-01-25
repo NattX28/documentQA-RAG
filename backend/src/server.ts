@@ -12,6 +12,8 @@ import { AppError } from "./utils/AppError.util";
 // Routes
 import authRoute from "./routes/auth.routes";
 import documentRoute from "./routes/document.routes";
+import conversationRoute from "./routes/conversation.routes";
+import chatRoute from "./routes/chat.routes";
 
 const app: Application = express();
 
@@ -36,6 +38,8 @@ app.use("/api", limiter);
 
 app.use("/api/auth", authRoute);
 app.use("/api/document", documentRoute);
+app.use("/api/conversations", conversationRoute);
+app.use("/api/chat", chatRoute);
 
 app.get("/health", (req: Request, res: Response) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
