@@ -10,7 +10,8 @@ import rateLimit from "express-rate-limit";
 import { AppError } from "./utils/AppError.util";
 
 // Routes
-import authRoute from "./routes/auth.route";
+import authRoute from "./routes/auth.routes";
+import documentRoute from "./routes/document.routes";
 
 const app: Application = express();
 
@@ -34,6 +35,7 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 app.use("/api/auth", authRoute);
+app.use("/api/document", documentRoute);
 
 app.get("/health", (req: Request, res: Response) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
