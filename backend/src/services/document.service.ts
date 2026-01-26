@@ -81,8 +81,8 @@ export const processDocumentChunks = async (
       console.log(`Chunking PDF with ${parsedDoc.pages.length} pages...`);
       chunks = await smartChunkWithPages(parsedDoc.pages, 1000, 200);
     } else {
-      // DOCX/TXT
-      chunks = await smartChunk(parsedDoc.text, 100, 200);
+      console.log(`Chunking DOCX/TXT...`);
+      chunks = await smartChunk(parsedDoc.text, 1000, 200);
     }
 
     console.log(`Created ${chunks.length} chunks`);
@@ -96,7 +96,7 @@ export const processDocumentChunks = async (
     }
 
     // Save chunks with embedding and page number
-    console.log("Saving chunks to Database");
+    console.log("Saving chunks to Database...");
     const insertPromises = chunks.map(async (chunk, index) => {
       const embedding = embeddings[index];
       if (!embedding) {
@@ -152,10 +152,11 @@ export const getDocumentById = async (
     [documentId, userId],
   );
 
-  if (result.rows) {
-    throw new Error("There are no document");
+  if (result.rows.length === 0) {
+    throw new Error("Document not found");
   }
-  return result.rows[0];
+
+  return result.rows.at(0)!;
 };
 
 export const deleteDocument = async (

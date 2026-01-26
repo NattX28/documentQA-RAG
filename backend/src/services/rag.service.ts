@@ -42,17 +42,18 @@ export const generateAnswer = async (
   );
 
   // Create prompt
-  const systemTemplate = `คุณเป็น AI ผู้ช่วยตอบคำถามโดยอ้างอิงจากเอกสารที่ให้มา
-      กฎการตอบคำถาม:
-      1. ตอบเฉพาะจากข้อมูลในเอกสารเท่านั้น
-      2. อ้างอิงแหล่งที่มาด้วยหมายเลข [1], [2] เป็นต้น
-      3. ถ้าคำตอบไม่อยู่ในเอกสาร ให้บอกว่า "ไม่พบข้อมูลในเอกสาร"
-      4. ตอบด้วยภาษาที่ผู้ใช้ถาม ให้เข้าใจง่าย กระชับ และตรงประเด็น
-      5. เมื่ออ้างอิง ให้ระบุทั้งชื่อเอกสารและหน้า (ถ้ามี)
+  const systemTemplate = `You are a helpful AI assistant that answers questions based on the provided context from documents.
 
-      เอกสารอ้างอิง:
-      ${context}
-      `;
+  IMPORTANT RULES:
+  1. Answer questions using ONLY the information from the context below
+  2. If the answer is in the context, provide it clearly and directly
+  3. Cite sources using [Source 1], [Source 2], etc.
+  4. If information is NOT in the context, say "I don't have that information in the documents"
+  5. Answer in the same language as the question (Thai or English)
+  6. Be specific and include relevant details from the context
+
+  CONTEXT:
+  ${context}`;
 
   const humanTemplate = "{question}";
 

@@ -5,12 +5,12 @@ import { generateAnswer } from "../services/rag.service";
 
 export const createConversation = async (req: Request, res: Response) => {
   const userId = req.user!.userId;
-  const { title } = req.body;
+  const title = req.body?.title ?? "New Conversation";
 
   const result = await pool.query<Conversation>(
     `INSERT INTO conversations (user_id, title)
     VALUES ($1, $2) RETURNING *`,
-    [userId, title || "New Conversation"],
+    [userId, title],
   );
 
   res.status(201).json({ conversation: result.rows.at(0) });

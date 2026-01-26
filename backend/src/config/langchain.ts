@@ -11,5 +11,5 @@ export const llm = new ChatOpenAI({
 // Initialize OpenAI Embeddings
 export const embeddings = new OpenAIEmbeddings({
   openAIApiKey: process.env.OPENAI_API_KEY,
-  modelName: "text-embedding-3-small",
+  modelName: "text-embedding-ada-002",
 });
