@@ -111,7 +111,7 @@ export const getUserConversations = async (req: Request, res: Response) => {
   const result = await pool.query<Conversation>(
     `SELECT * FROM conversations
     WHERE user_id = $1
-    ORDER BY uploaded_at DESC`,
+    ORDER BY updated_at DESC`,
     [userId],
   );
 
