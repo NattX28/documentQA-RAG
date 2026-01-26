@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/error";
 import { useStore } from "@/lib/store";
+import { login } from "@/services/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,12 +30,12 @@ export const LoginPage = () => {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/auth/login", { email, password });
-      const result = data.result;
+      const { data } = await login(email, password);
+      const { token, user } = data.result;
 
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
-      setUser(result.user);
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
 
       toast.success("Logged in successfully");
       router.push("/");
