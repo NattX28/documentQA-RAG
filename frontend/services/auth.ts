@@ -1,6 +1,6 @@
 import api from "@/lib/api";
 
-import { LoginResponse } from "@/types/auth";
+import { LoginResponse, RegisterResponse } from "@/types/auth";
 
 export const login = (email: string, password: string) => {
   return api.post<LoginResponse>("/auth/login", {
@@ -10,7 +10,7 @@ export const login = (email: string, password: string) => {
 };
 
 export const register = (email: string, password: string, name?: string) => {
-  return api.post<LoginResponse>("/auth/register", {
+  return api.post<RegisterResponse>("/auth/register", {
     email,
     password,
     name,

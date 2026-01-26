@@ -1,8 +1,15 @@
 import { User } from ".";
 
-export type LoginResponse = {
+export interface LoginResponse {
   result: {
     token: string;
     user: User;
   };
-};
+}
+
+export interface RegisterResponse {
+  result: {
+    token: string;
+    user: User;
+  };
+}
