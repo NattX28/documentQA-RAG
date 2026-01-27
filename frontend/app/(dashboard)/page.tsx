@@ -3,17 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { getErrorMessage } from "@/lib/error";
 import { useStore } from "@/lib/store";
 import {
   createNewConversation,
-  getConversations,
   getUserConversationHistory,
+  getConversations,
 } from "@/services/chat";
 import { loadAllDocuments } from "@/services/documents";
 import { Message } from "@/types";
 import { SourceChunk } from "@/types/document";
-import { SendHorizonal } from "lucide-react";
+import { SendHorizonal, FileText } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -28,6 +36,10 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(false);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState<string>("");
+  const [selectedSource, setSelectedSource] = useState<SourceChunk | null>(
+    null,
+  );
+  const [isSourceDialogOpen, setIsSourceDialogOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -38,15 +50,16 @@ const ChatPage = () => {
           const { data } = await loadAllDocuments();
           setDocuments(data.documents);
         }
+
+        const { data: convData } = await getConversations();
+        setConversations(convData.conversations);
       } catch (error) {
         console.error("Failed to initialize data:", error);
       }
-      const { data: convData } = await getConversations();
-      setMessages(convData.conversations);
     };
 
     initializeData();
-  }, []);
+  }, []); // เพิ่ม dependency array
 
   const loadConversation = async (id: string) => {
     try {
@@ -244,15 +257,32 @@ const ChatPage = () => {
 
                       {message.sources && message.sources.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
-                          <div className="text-xs font-semibold mb-2">
-                            Sources:
+                          <div className="text-xs font-semibold mb-2 text-gray-700">
+                            📚 Sources ({message.sources.length})
                           </div>
-                          {message.sources.map((source, idx) => (
-                            <div key={idx} className="text-xs mb-1">
-                              [{idx + 1}] {source.document_title} (
-                              {Math.round(source.similarity * 100)}%)
-                            </div>
-                          ))}
+                          <div className="flex flex-wrap gap-2">
+                            {message.sources.map((source, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  setSelectedSource(source);
+                                  setIsSourceDialogOpen(true);
+                                }}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-md text-xs font-medium transition-colors cursor-pointer border border-indigo-200"
+                              >
+                                <FileText className="w-3 h-3" />
+                                <span className="truncate max-w-[150px]">
+                                  {source.document_title}
+                                </span>
+                                <Badge
+                                  variant="secondary"
+                                  className="text-[10px] px-1 py-0"
+                                >
+                                  {Math.round(source.similarity * 100)}%
+                                </Badge>
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -321,6 +351,67 @@ const ChatPage = () => {
           )}
         </form>
       </div>
+
+      {/* Source Dialog */}
+      <Dialog open={isSourceDialogOpen} onOpenChange={setIsSourceDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-indigo-600" />
+              {selectedSource?.document_title}
+            </DialogTitle>
+            <DialogDescription>
+              View the source content that was used to generate the response
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedSource && (
+            <div className="space-y-4">
+              {/* Metadata */}
+              <div className="flex flex-wrap gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-gray-600">
+                    Relevance:
+                  </span>
+                  <Badge variant="secondary">
+                    {Math.round(selectedSource.similarity * 100)}%
+                  </Badge>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-gray-600">
+                    Chunk:
+                  </span>
+                  <Badge variant="outline">#{selectedSource.chunk_index}</Badge>
+                </div>
+
+                {selectedSource.page_number && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-gray-600">
+                      Page:
+                    </span>
+                    <Badge variant="outline">
+                      {selectedSource.page_number}
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div>
+                <h4 className="text-sm font-semibold mb-2 text-gray-700">
+                  Content:
+                </h4>
+                <div className="p-4 bg-white border border-gray-200 rounded-lg">
+                  <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+                    {selectedSource.content}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

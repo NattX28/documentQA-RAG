@@ -1,3 +1,5 @@
+import { SourceChunk } from "./document";
+
 export interface User {
   id: string;
   email: string;
@@ -20,13 +22,6 @@ export interface Message {
   content: string;
   sources?: SourceChunk[];
   created_at: string;
-}
-
-export interface SourceChunk {
-  document_title: string;
-  content: string;
-  similarity: number;
-  chunk_index: number;
 }
 
 export interface Conversation {
