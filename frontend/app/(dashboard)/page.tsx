@@ -43,6 +43,7 @@ const ChatPage = () => {
   const [isSourceDialogOpen, setIsSourceDialogOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -209,6 +210,16 @@ const ChatPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+
+    // Auto-resize textarea
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
   useEffect(() => {
     const initConversation = async () => {
       if (conversationId) {
@@ -344,12 +355,20 @@ const ChatPage = () => {
       {/* Input Area */}
       <div className="border-t bg-white p-4">
         <form onSubmit={handleSubmit} className="flex gap-2 max-w-4xl mx-auto">
-          <Input
+          <textarea
+            ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
             placeholder="Ask a question about your documents..."
             disabled={loading}
-            className="flex-1"
+            rows={1}
+            className="flex-1 min-h-[44px] max-h-[200px] px-3 py-2.5 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
           />
           {loading ? (
             <Button type="button" onClick={handleStop} variant="destructive">
