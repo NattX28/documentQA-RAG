@@ -80,7 +80,7 @@ const ChatPage = () => {
 
       // Fetch with streaming
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/conversations/message-stream`,
+        `${process.env.NEXT_PUBLIC_API_URL}/chat/message-stream`,
         {
           method: "POST",
           headers: {
@@ -165,13 +165,20 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    if (conversationId) {
-      loadConversation(conversationId);
-      setCurrentConvId(conversationId);
-    } else {
-      setMessages([]);
-      setCurrentConvId(null);
-    }
+    const initConversation = async () => {
+      if (conversationId) {
+        setMessages([]);
+        setStreamingMessage("");
+        await loadConversation(conversationId);
+        setCurrentConvId(conversationId);
+      } else {
+        setMessages([]);
+        setStreamingMessage("");
+        setCurrentConvId(null);
+      }
+    };
+
+    initConversation();
   }, [conversationId]);
 
   useEffect(() => {
