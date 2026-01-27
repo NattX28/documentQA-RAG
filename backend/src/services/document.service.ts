@@ -164,7 +164,7 @@ export const deleteDocument = async (
   userId: string,
 ): Promise<void> => {
   const result = await pool.query(
-    `SELECT id, storage_path, FROM documents WHERE id = $1 AND user_id = $2`,
+    `SELECT id, storage_path FROM documents WHERE id = $1 AND user_id = $2`,
     [documentId, userId],
   );
 

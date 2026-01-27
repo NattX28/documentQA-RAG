@@ -110,15 +110,20 @@ const DocumentsPage = () => {
     if (!confirm("Are you sure you want to delete this document?")) return;
 
     try {
+      // Delete from ui instantly
+      setDocuments(documents.filter((doc) => doc.id !== id));
+
       await deleteDocument(id);
+
       toast.success("Success", {
         description: "Document deleted",
       });
-      loadDocuments();
     } catch (error) {
       toast.error("Error", {
         description: "Failed to delete document",
       });
+
+      loadDocuments(); // Rollback
     }
   };
 
