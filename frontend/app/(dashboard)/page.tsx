@@ -7,8 +7,10 @@ import { getErrorMessage } from "@/lib/error";
 import { useStore } from "@/lib/store";
 import {
   createNewConversation,
+  getConversations,
   getUserConversationHistory,
 } from "@/services/chat";
+import { loadAllDocuments } from "@/services/documents";
 import { Message } from "@/types";
 import { SourceChunk } from "@/types/document";
 import { SendHorizonal } from "lucide-react";
@@ -19,7 +21,7 @@ import { toast } from "sonner";
 const ChatPage = () => {
   const searchParams = useSearchParams();
   const conversationId = searchParams.get("c");
-  const { documents } = useStore();
+  const { documents, setDocuments, setConversations } = useStore();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -28,6 +30,23 @@ const ChatPage = () => {
   const [streamingMessage, setStreamingMessage] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        if (documents.length === 0) {
+          const { data } = await loadAllDocuments();
+          setDocuments(data.documents);
+        }
+      } catch (error) {
+        console.error("Failed to initialize data:", error);
+      }
+      const { data: convData } = await getConversations();
+      setMessages(convData.conversations);
+    };
+
+    initializeData();
+  }, []);
 
   const loadConversation = async (id: string) => {
     try {

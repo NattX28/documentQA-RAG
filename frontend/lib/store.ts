@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { User, Conversation, Document } from "@/types";
 
 interface AppState {
@@ -14,20 +15,37 @@ interface AppState {
   logout: () => void;
 }
 
-export const useStore = create<AppState>((set) => ({
-  user: null,
-  conversations: [],
-  documents: [],
-  currentConversationId: null,
+export const useStore = create<AppState>()(
+  persist(
+    (set) => ({
+      user: null,
+      conversations: [],
+      documents: [],
+      currentConversationId: null,
 
-  setUser: (user) => set({ user }),
-  setConversations: (conversations) => set({ conversations }),
-  setDocuments: (documents) => set({ documents }),
-  setCurrentConversationId: (id) => set({ currentConversationId: id }),
+      setUser: (user) => set({ user }),
+      setConversations: (conversations) => set({ conversations }),
+      setDocuments: (documents) => set({ documents }),
+      setCurrentConversationId: (id) => set({ currentConversationId: id }),
 
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    set({ user: null, conversations: [], currentConversationId: null });
-  },
-}));
+      logout: () => {
+        localStorage.removeItem("token");
+        set({
+          user: null,
+          conversations: [],
+          documents: [],
+          currentConversationId: null,
+        });
+      },
+    }),
+    {
+      name: "rag-app-storage",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        user: state.user,
+        conversations: state.conversations,
+        documents: state.documents,
+      }),
+    },
+  ),
+);
