@@ -1,3 +1,4 @@
+// components/App-Sidebar.tsx
 "use client";
 import { useStore } from "@/lib/store";
 import { usePathname } from "next/navigation";
@@ -77,10 +78,10 @@ const AppSideBar = () => {
                     asChild
                     isActive={pathname === `/?c=${conv.id}`}
                   >
-                    <Link href={`/>c=${conv.id}`}>
-                      <MessageSquare className="h4 w-4" />
+                    <Link href={`/?c=${conv.id}`}>
+                      <MessageSquare className="h-4 w-4" />
                       <span className="truncate">
-                        {conv.title || "new Conversation"}
+                        {conv.title || "New Conversation"}
                       </span>
                     </Link>
                   </SidebarMenuButton>
@@ -97,8 +98,10 @@ const AppSideBar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={pathname === "/document"}>
-                  <FileText className="h4 w-4" />
-                  <span>Document</span>
+                  <Link href="/document">
+                    <FileText className="h-4 w-4" />
+                    <span>Document</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
