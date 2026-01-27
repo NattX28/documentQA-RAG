@@ -130,7 +130,7 @@ export const sendMessageStream = async (req: Request, res: Response) => {
     (chunk: string) => {
       // Send each chunk as SSE
       res.write(
-        `data: ${JSON.stringify({ type: "chunk", context: chunk })}\n\n`,
+        `data: ${JSON.stringify({ type: "chunk", content: chunk })}\n\n`,
       );
     },
   );
