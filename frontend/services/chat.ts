@@ -13,3 +13,12 @@ export const getConversations = () => {
 export const getUserConversationHistory = (id: string) => {
   return api.get<ConversationHistory>(`/conversations/${id}`);
 };
+
+export const updateTitleConversation = (
+  conversationId: string,
+  newTitle: string,
+) => {
+  return api.patch(`/conversations/${conversationId}`, {
+    title: newTitle,
+  });
+};

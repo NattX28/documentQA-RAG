@@ -17,6 +17,7 @@ import {
   createNewConversation,
   getUserConversationHistory,
   getConversations,
+  updateTitleConversation,
 } from "@/services/chat";
 import { loadAllDocuments } from "@/services/documents";
 import { Message } from "@/types";
@@ -96,14 +97,26 @@ const ChatPage = () => {
     try {
       // Create conversation if needed
       let convId = currentConvId;
+      let isNewConversation = false;
       if (!convId) {
-        const { data: convData } = await createNewConversation(
-          userMessage.slice(0, 50),
-        );
+        const { data: convData } =
+          await createNewConversation("New Conversation");
         convId = convData.conversation.id;
         setCurrentConvId(convId);
+        isNewConversation = true;
       }
 
+      if (isNewConversation || messages.length === 0) {
+        try {
+          await updateTitleConversation(convId, userMessage.slice(0, 50));
+
+          // Update local state
+          const { data: convData } = await getConversations();
+          setConversations(convData.conversations);
+        } catch (error) {
+          console.error("Failed to update conversation title:", error);
+        }
+      }
       // Create AbortController for cancellation
       abortControllerRef.current = new AbortController();
 
