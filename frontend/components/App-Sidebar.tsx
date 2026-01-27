@@ -22,12 +22,22 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { createNewConversation } from "@/services/chat";
+import { getErrorMessage } from "@/lib/error";
+import { toast } from "sonner";
 
 const AppSideBar = () => {
   const pathname = usePathname();
   const { user, conversations, setConversations } = useStore();
 
-  const createNewChat = async () => {};
+  const createNewChat = async () => {
+    try {
+      const { data } = await createNewConversation("New Conversation");
+      setConversations([data.conversation, ...conversations]);
+    } catch (error) {
+      toast.error(getErrorMessage(error) || "Failed to create conversation");
+    }
+  };
 
   return (
     <Sidebar>
