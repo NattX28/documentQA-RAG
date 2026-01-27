@@ -1,6 +1,6 @@
 import api from "@/lib/api";
 
-import { ConversationResponse } from "@/types/chat";
+import { ConversationHistory, ConversationResponse } from "@/types/chat";
 
 export const createNewConversation = (title?: string) => {
   return api.post<ConversationResponse>("/conversations/create", { title });
@@ -8,4 +8,8 @@ export const createNewConversation = (title?: string) => {
 
 export const getConversations = () => {
   return api.get("/conversations");
+};
+
+export const getUserConversationHistory = (id: string) => {
+  return api.get<ConversationHistory>(`/conversationd/${id}`);
 };

@@ -2,7 +2,10 @@
 
 import { getErrorMessage } from "@/lib/error";
 import { useStore } from "@/lib/store";
-import { createNewConversation } from "@/services/chat";
+import {
+  createNewConversation,
+  getUserConversationHistory,
+} from "@/services/chat";
 import { Message } from "@/types";
 import { SourceChunk } from "@/types/document";
 import { useSearchParams } from "next/navigation";
@@ -24,7 +27,11 @@ const ChatPage = () => {
 
   const loadConversation = async (id: string) => {
     try {
-    } catch (error) {}
+      const { data } = await getUserConversationHistory(id);
+      setMessages(data.messages);
+    } catch (error) {
+      console.error("Failed to load conversation:", error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
