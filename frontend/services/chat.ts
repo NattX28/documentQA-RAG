@@ -11,5 +11,5 @@ export const getConversations = () => {
 };
 
 export const getUserConversationHistory = (id: string) => {
-  return api.get<ConversationHistory>(`/conversationd/${id}`);
+  return api.get<ConversationHistory>(`/conversations/${id}`);
 };

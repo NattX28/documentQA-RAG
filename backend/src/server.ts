@@ -37,7 +37,7 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 app.use("/api/auth", authRoute);
-app.use("/api/document", documentRoute);
+app.use("/api/documents", documentRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/chat", chatRoute);
 

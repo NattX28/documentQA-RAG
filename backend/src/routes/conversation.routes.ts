@@ -13,7 +13,7 @@ router.use(authMiddleware);
 
 router.post("/create", createConversation);
 router.get("/", getUserConversations);
-router.post("/:conversationId", getConversationHistory);
+router.get("/:conversationId", getConversationHistory);
 router.delete("/:conversationId", deleteConversation);
 
 export default router;
