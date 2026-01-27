@@ -198,6 +198,36 @@ export const getUserConversations = async (req: Request, res: Response) => {
   });
 };
 
+export const updateConversation = async (req: Request, res: Response) => {
+  const userId = req.user!.userId;
+  const { conversationId } = req.params;
+  const { title } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ error: "Title is required" });
+  }
+
+  // Verify conversation ownership and update
+  const result = await pool.query<Conversation>(
+    `UPDATE conversations
+     SET title = $1, updated_at = NOW()
+     WHERE id = $2 AND user_id = $3
+     RETURNING *`,
+    [title, conversationId, userId],
+  );
+
+  if (result.rows.length === 0) {
+    return res
+      .status(404)
+      .json({ success: false, error: "Conversation not found" });
+  }
+
+  res.json({
+    success: true,
+    conversation: result.rows.at(0),
+  });
+};
+
 export const deleteConversation = async (req: Request, res: Response) => {
   const userId = req.user!.userId;
   const { conversationId } = req.params;
