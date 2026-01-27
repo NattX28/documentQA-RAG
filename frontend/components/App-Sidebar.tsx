@@ -97,10 +97,10 @@ const AppSideBar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === "/document"}>
-                  <Link href="/document">
+                <SidebarMenuButton asChild isActive={pathname === "/documents"}>
+                  <Link href="/documents">
                     <FileText className="h-4 w-4" />
-                    <span>Document</span>
+                    <span>Documents</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
