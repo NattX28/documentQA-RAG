@@ -126,7 +126,7 @@ const ChatPage = () => {
 
       // Fetch with streaming
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/chat/message-stream`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/chat/message-stream`,
         {
           method: "POST",
           headers: {
