@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getErrorMessage } from "@/lib/error";
 import { useStore } from "@/lib/store";
 import {
@@ -8,6 +11,7 @@ import {
 } from "@/services/chat";
 import { Message } from "@/types";
 import { SourceChunk } from "@/types/document";
+import { SendHorizonal } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -173,6 +177,126 @@ const ChatPage = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, streamingMessage]);
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* Message Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && !streamingMessage ? (
+          <div className="h-full flex flex-col items-center justify-center text-center p-8">
+            <div className="text-2xl font-semibold mb-2">💬</div>
+            <h2 className="text-2xl font-semibold mb-2">
+              Start a Conversation
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Ask questions about uploaded documents
+            </p>
+            {documents.length === 0 && (
+              <p className="text-sm text-amber-600">
+                ⚠️ Please upload document first ⚠️
+              </p>
+            )}
+          </div>
+        ) : (
+          <>
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <Card
+                  className={`max-w-[80%] p-4 sm:p-2 ${message.role === "user" ? "bg-indigo-600 text-white" : "bg-white"}`}
+                >
+                  <div className="flex items-start gap-2">
+                    <div className="text-xl">
+                      {message.role === "user" ? "👤" : "👾"}
+                    </div>
+                    <div className="flex-1">
+                      <div className="whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+
+                      {message.sources && message.sources.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="text-xs font-semibold mb-2">
+                            Sources:
+                          </div>
+                          {message.sources.map((source, idx) => (
+                            <div key={idx} className="text-xs mb-1">
+                              [{idx + 1}] {source.document_title} (
+                              {Math.round(source.similarity * 100)}%)
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            ))}
+
+            {/* Streaming Message */}
+            {streamingMessage && (
+              <div className="flex justify-start">
+                <Card className="max-w-[80%] p-4 bg-white">
+                  <div className="flex items-start gap-2">
+                    <div className="text-xl">👾</div>
+                    <div className="flex-1">
+                      <div className="whitespace-pre-wrap">
+                        {streamingMessage}
+                        <span className="inline-block w-2 h-4 bg-indigo-600 ml-1 animate-pulse">
+                          ▋
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
+          </>
+        )}
+
+        {loading && !streamingMessage && (
+          <div className="flex justify-start">
+            <Card className="max-w-[80%] p-4 bg-white">
+              <div className="flex items-center gap-2">
+                <div className="text-xl">👾</div>
+                <div className="flex gap-1">
+                  <span className="animate-bounce">•</span>
+                  <span className="animate-bounce delay-100">•</span>
+                  <span className="animate-bounce delay-200">•</span>
+                </div>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Area */}
+      <div className="border-t bg-white p-4">
+        <form onSubmit={handleSubmit} className="flex gap-2 max-w-4xl mx-auto">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask a question about your documents..."
+            disabled={loading}
+            className="flex-1"
+          />
+          {loading ? (
+            <Button type="button" onClick={handleStop} variant="destructive">
+              Stop
+            </Button>
+          ) : (
+            <Button type="submit" disabled={!input.trim()}>
+              <SendHorizonal />
+            </Button>
+          )}
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default ChatPage;
