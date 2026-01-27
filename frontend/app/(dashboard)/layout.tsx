@@ -62,10 +62,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-6" />
           <h1 className="text-lg font-semibold">Document Q&A</h1>
-
-          {/* Main Content */}
-          <div className="flex-1 overflow-auto">{children}</div>
         </header>
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
