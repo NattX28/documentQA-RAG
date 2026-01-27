@@ -313,9 +313,7 @@ const ChatPage = () => {
                     <div className="flex-1">
                       <div className="whitespace-pre-wrap">
                         {streamingMessage}
-                        <span className="inline-block w-2 h-4 bg-indigo-600 ml-1 animate-pulse">
-                          ▋
-                        </span>
+                        <span className="inline-block w-1 h-4 bg-indigo-600 ml-1 animate-blink align-middle"></span>
                       </div>
                     </div>
                   </div>
