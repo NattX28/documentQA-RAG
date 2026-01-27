@@ -6,6 +6,7 @@ import {
   getConversationHistory,
   getUserConversations,
   sendMessage,
+  sendMessageStream,
 } from "../controllers/chat.controller";
 
 const router = Router();
@@ -13,5 +14,6 @@ const router = Router();
 router.use(authMiddleware);
 
 router.post("/send", sendMessage);
+router.post("/message-stream", sendMessageStream);
 
 export default router;
