@@ -2,7 +2,7 @@ import pool from "../config/database";
 import { supabase } from "../config/supabase";
 import type { Document, ParsedDocument } from "../models/types";
 import { smartChunk, smartChunkWithPages } from "../utils/chunking";
-import { parseFile } from "../utils/fie-parser";
+import { parseFile } from "../utils/file-parser";
 import { createEmbeddings } from "./embedding.service";
 
 export const uploadDocument = async (
